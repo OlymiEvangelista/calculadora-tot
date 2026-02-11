@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora TOT Dynamics</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f9; display: flex; justify-content: center; padding: 40px; }
+        .container { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); max-width: 450px; width: 100%; }
+        
+        /* Ajuste na logo para centralizar e manter proporção */
+        .logo-container { text-align: center; margin-bottom: 10px; }
+        .logo { max-width: 150px; height: auto; border-radius: 8px; }
+
+        h2 { color: #2c3e50; text-align: center; margin-bottom: 25px; font-size: 1.5rem; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: 600; color: #444; font-size: 0.9rem; }
+        input { width: 100%; padding: 12px; border: 2px solid #e1e4e8; border-radius: 8px; box-sizing: border-box; font-size: 16px; transition: border-color 0.3s; }
+        input:focus { border-color: #2c3e50; outline: none; }
+        
+        button { width: 100%; padding: 15px; background-color: #2c3e50; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: bold; margin-top: 10px; transition: background 0.3s; }
+        button:hover { background-color: #1a252f; }
+
+        #resultado { margin-top: 25px; padding: 20px; background-color: #fff; border: 1px solid #e1e4e8; border-radius: 8px; display: none; }
+        .linha { display: flex; justify-content: space-between; margin-bottom: 8px; border-bottom: 1px solid #f0f0f0; padding-bottom: 5px; font-size: 0.95rem; }
+        
+        .destaque-credito { color: #2ecc71; font-weight: bold; }
+        .total-pagar { font-size: 1.3rem; color: #d93025; font-weight: bold; margin-top: 15px; text-align: center; border-top: 2px solid #eee; padding-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo-container">
+            <img src="Evangelista.png" alt="TOT Dynamics by Alex Evangelista" class="logo">
+        </div>
+
+        <h2>Ajuste de Mensalidade</h2>
+        
+        <div class="form-group">
+            <label>Valor da Mensalidade Atual (R$):</label>
+            <input type="number" id="valorMensal" placeholder="Ex: 300.00" step="0.01">
+        </div>
+
+        <div class="form-group">
+            <label>Início do Congelamento:</label>
+            <input type="date" id="dataInicio">
+        </div>
+
+        <div class="form-group">
+            <label>Retorno do Congelamento:</label>
+            <input type="date" id="dataFim">
+        </div>
+
+        <button onclick="calcular()">Calcular Novo Valor</button>
+
+        <div id="resultado">
+            <div class="linha"><span>Dias de afastamento:</span> <span id="resDias"></span></div>
+            <div class="linha"><span>Valor da diária:</span> <span id="resDiaria"></span></div>
+            <div class="linha"><span>Crédito gerado:</span> <span id="resCredito" class="destaque-credito"></span></div>
+            
+            <div class="total-pagar">
+                Valor a Pagar: <br>
+                <span id="resFinal"></span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    function calcular() {
+        const mensalidade = parseFloat(document.getElementById('valorMensal').value);
+        const d1 = document.getElementById('dataInicio').value;
+        const d2 = document.getElementById('dataFim').value;
+
+        if (!mensalidade || !d1 || !d2) {
+            alert("Por favor, preencha todos os campos.");
+            return;
+        }
+
+        const dataInicio = new Date(d1);
+        const dataFim = new Date(d2);
+
+        const diffTime = Math.abs(dataFim - dataInicio);
+        const totalDias = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+        const valorDiaria = mensalidade / 30;
+        const creditoTotal = totalDias * valorDiaria;
+        
+        let valorAPagar = mensalidade - creditoTotal;
+        if (valorAPagar < 0) valorAPagar = 0;
+
+        document.getElementById('resDias').innerText = totalDias + " dias";
+        document.getElementById('resDiaria').innerText = "R$ " + valorDiaria.toFixed(2).replace('.', ',');
+        document.getElementById('resCredito').innerText = "- R$ " + creditoTotal.toFixed(2).replace('.', ',');
+        document.getElementById('resFinal').innerText = "R$ " + valorAPagar.toFixed(2).replace('.', ',');
+        
+        document.getElementById('resultado').style.display = 'block';
+    }
+    </script>
+</body>
+</html>
